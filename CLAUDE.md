@@ -87,3 +87,45 @@ Build the PWA. Start with:
 5. Then streak tracking, offline support, and polish
 
 Ask clarifying questions before writing code if anything above is ambiguous.
+
+---
+
+## ⚠️ Maintaining & updating the app — READ BEFORE EDITING
+
+The app is built and deployed. Learner progress (streaks, card scheduling,
+mastery/levels, imported cards, settings) lives **only in each phone's
+`localStorage`** — there is no backend or cloud backup. Follow these rules so an
+update never wipes anyone's progress.
+
+**1. Never change the repo name or the deployed URL.**
+- Progress is bound to the site *origin*: `https://erupkus.github.io/Lithuanian-English-App/`.
+- Renaming the repo or moving the URL makes the browser treat it as a brand-new
+  site → looks like a full reset (old data stranded at the old URL).
+- The repo is **public** (free GitHub Pages). Keep it that way unless the user
+  moves to a host that serves private repos.
+
+**2. Bump the service-worker cache version on EVERY code/content edit.**
+- In `service-worker.js`, increment `const CACHE = 'mokausi-anglu-vN'` (v2 → v3 …).
+- Phones serve the old cached app until this changes — forget it and edits won't
+  appear. This refreshes the app; it does **not** reset progress.
+
+**3. Preserve card IDs — progress is keyed by them.**
+- A card's SRS state is stored under an ID derived from its **position** in its
+  unit: `js/decks.js` → `buildCurriculum()` sets `id = \`${unit.id}-${i + 1}\``.
+- ✅ SAFE edits: change a card's `lt`/`en` text; append new cards to the **end**
+  of a unit; add whole new units (new `unit.id`); CSS/JS changes.
+- ⚠️ SCRAMBLES progress: **inserting** a card mid-unit or **reordering** cards
+  (shifts every later index → ID → wrong saved state). Also: renaming a
+  `unit.id`, or changing the `id` scheme. Avoid these, or accept a soft reset.
+- If the user wants to freely reorder/insert, switch to **explicit stable `id`
+  fields per card** (and migrate) rather than positional indices.
+
+**4. Storage facts (don't break these).**
+- Keys are namespaced per profile: `lte:profile`, `lte:{mom|dad}:cards|stats|custom|settings`.
+- Imported (paste-in) cards live in `lte:{profile}:custom` — in localStorage,
+  not in code — so editing `decks.js` never touches them.
+- Each phone is independent by design (no sync between Mom's and Dad's devices).
+
+**Deploy loop:** edit → bump `CACHE` → commit → push to `main` → GitHub Pages
+redeploys in ~1 min. Optional robustness not yet added: `navigator.storage.persist()`
+(reduce eviction risk) and an export/import-progress backup button.
