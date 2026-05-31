@@ -1,0 +1,15 @@
+{
+  "version": "0.0.1",
+  "configurations": [
+    {
+      "name": "pwa",
+      "runtimeExecutable": "powershell",
+      "runtimeArgs": [
+        "-NoProfile",
+        "-Command",
+        "Get-Content 'tools/serve.ps1' -Raw | Invoke-Expression"
+      ],
+      "port": 8123
+    }
+  ]
+}
