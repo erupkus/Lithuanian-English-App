@@ -11,7 +11,7 @@ import {
   SESSION,
 } from './levels.js';
 import { buildSession, review, isDue } from './srs.js';
-import { MODES, defaultModes, pickMode, checkAnswer } from './modes.js';
+import { MODES, defaultModes, pickMode, checkAnswer, makeCloze, checkCloze } from './modes.js';
 import * as store from './storage.js';
 import * as speech from './speech.js';
 import * as ui from './ui.js';
@@ -153,6 +153,9 @@ function makeExercise(card) {
       ex.options = options;
     }
   }
+  if (ex.mode === MODES.TYPE) {
+    ex.cloze = makeCloze(card.en); // fill-in-the-blank: type only the key word
+  }
   return ex;
 }
 
@@ -230,7 +233,9 @@ function checkType() {
   const ex = session.ex;
   const el = document.getElementById('type-input');
   ex.typed = el ? el.value : '';
-  ex.correct = checkAnswer(ex.typed, ex.card.en);
+  ex.correct = ex.cloze
+    ? checkCloze(ex.typed, ex.cloze.answer, ex.card.en)
+    : checkAnswer(ex.typed, ex.card.en);
   ex.grade = ex.correct ? 'good' : 'again';
   ex.stage = 'a';
   buzz();

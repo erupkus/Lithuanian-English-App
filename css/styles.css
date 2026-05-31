@@ -251,6 +251,7 @@ button { font-family: inherit; cursor: pointer; border: none; background: none; 
 .result--ok { color: var(--green); }
 .result--no { color: var(--red); }
 
+.cloze { font-size: 1.5rem; font-weight: 700; line-height: 1.5; }
 .type-input {
   width: 100%;
   font-family: inherit;

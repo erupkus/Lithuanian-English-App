@@ -1,6 +1,6 @@
 // Offline support: precache the full app shell on install and serve cache-first.
 // Bump CACHE when any asset changes to roll the cache over.
-const CACHE = 'mokausi-anglu-v2';
+const CACHE = 'mokausi-anglu-v3';
 
 const ASSETS = [
   './',

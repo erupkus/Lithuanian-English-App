@@ -99,7 +99,8 @@ export function levelsView(d) {
 }
 
 export function sessionView(d) {
-  const pct = d.total ? Math.round((d.index / d.total) * 100) : 0;
+  // Match the visible count: on card "8/8" the bar should read 100%.
+  const pct = d.total ? Math.round(((d.index + 1) / d.total) * 100) : 0;
   const bodies = {
     flash: flashBody,
     listen: listenBody,
@@ -184,14 +185,16 @@ function listenBody(ex) {
 
 // --- typing (type the English) ---
 function typeBody(ex) {
+  const cloze = ex.cloze || { blanked: ex.card.en, answer: ex.card.en };
   if (ex.stage !== 'a') {
     return {
       card: `<div class="card card--type">
-               <div class="card__lt card__lt--sm">Parašyk angliškai:</div>
                <div class="card__lt">${escapeHtml(ex.card.lt)}</div>
+               <div class="card__lt card__lt--sm">Įrašyk trūkstamą žodį:</div>
+               <div class="cloze">${escapeHtml(cloze.blanked)}</div>
                <input class="type-input" id="type-input" type="text" autocomplete="off"
                       autocapitalize="off" autocorrect="off" spellcheck="false"
-                      placeholder="anglų kalba..." />
+                      placeholder="trūkstamas žodis..." />
              </div>`,
       footer: `<div class="ratings"><button class="primary-btn" data-action="check-type">Tikrinti</button></div>`,
     };
